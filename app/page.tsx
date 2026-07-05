@@ -1,21 +1,23 @@
 "use client";
-import Image from 'next/image';
 
-import { useEffect } from "react";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+
+type Review = {
+  id: number;
+  name: string;
+  rating: number;
+  review: string;
+  createdAt: string;
+};
 
 export default function HomePage() {
-  useEffect(() => {
-    //Navbar glass effect on scroll 
-    const nav = document.getElementById("nav");
-    const handleScroll = () => {  
-      nav?.classList.toggle("scrolled", window.scrollY > 20);
-    
-    };
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [loading, setLoading] = useState(true);
 
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    
-    //Scroll reveal animation
-    
+  useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -27,53 +29,56 @@ export default function HomePage() {
       },
       { threshold: 0.12 }
     );
-
     document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-      observer.disconnect();
-    };
+    return () => observer.disconnect();
   }, []);
+
+  useEffect(() => {
+    fetch("/api/feedback")
+      .then((r) => r.json())
+      .then((data) => {
+        const feedbackItems = data.feedback ?? [];
+       const topReviews = feedbackItems
+          .map((item: any) => ({
+            id: item.id,
+            name: item.userName || "Anonymous",
+            rating: item.rating,
+            review: item.message,
+            createdAt: item.createdAt,
+          }))
+          .sort((a: Review, b: Review) => b.rating - a.rating) 
+          .slice(0, 3); 
+
+
+        
+        setReviews(topReviews);
+        setLoading(false);
+      })
+    
+      
+    ;
+  }, []);
+
+  function getInitials(name: string) {
+    return name.charAt(0).toUpperCase();
+  }
+
   return (
     <>
+      <Navbar />
 
-      {/* navbar*/}
-      <nav className="nav" id="nav" aria-label="Main navigation">
-        <div className="nav-inner">
-            <span className="nav-logo-text">Yalla</span>
-          
-
-          <ul className="nav-links" role="list">
-            <li><a href="#how">How it works</a></li>
-            <li><a href="#features">Features</a></li>
-            <li><a href="#reviews">Reviews</a></li>
-          </ul>
-
-          <div className="nav-cta">
-            <a href="#download" className="btn-nav">Download app</a>
-          </div>
-
-          <button className="nav-menu-btn" aria-label="Open menu">
-            <span></span><span></span><span></span>
-          </button>
-
-        </div>
-      </nav>
-
-      {/*HERO*/}
-      <section className="hero container" aria-labelledby="hero-heading">
-
+      {/* HERO */}
+      <section className="hero container" aria-labelledby="hero-heading" style={{ marginTop: "50px" }}>
         <div className="hero-left">
           <div className="hero-tag">
             <span className="tag">
               <span className="tag-dot" aria-hidden="true"></span>
-              Now available in lebanon
+              Now available in Lebanon
             </span>
           </div>
 
           <h1 className="hero-headline" id="hero-heading">
-            Your ride,<br/><em>instantly.</em>
+            Your ride,<br /><em>instantly.</em>
           </h1>
 
           <p className="hero-sub">
@@ -82,13 +87,12 @@ export default function HomePage() {
           </p>
 
           <div className="hero-actions">
-            <a href="#download" className="btn-primary">
+            <Link href="/download" className="btn-primary">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" strokeWidth="2.5"
-                  strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
               Get the app
-            </a>
+            </Link>
             <a href="#how" className="btn-ghost">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
@@ -99,7 +103,7 @@ export default function HomePage() {
           </div>
 
           <div className="store-badges" aria-label="Download links">
-            <a href="#download" className="store-badge">
+            <a href="/download" className="store-badge">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="white" aria-hidden="true">
                 <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
               </svg>
@@ -108,7 +112,7 @@ export default function HomePage() {
                 <div className="store-badge-name">App Store</div>
               </div>
             </a>
-            <a href="#download" className="store-badge">
+            <a href="/download" className="store-badge">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <path d="M3.18 23.76c.3.17.65.2.98.07l11.65-6.73-2.6-2.6-10.03 9.26z" fill="#EA4335"/>
                 <path d="M22.23 10.07l-2.98-1.72-2.93 2.65 2.93 2.93 2.98-1.72c.85-.49.85-1.65 0-2.14z" fill="#FBBC05"/>
@@ -121,27 +125,24 @@ export default function HomePage() {
               </div>
             </a>
           </div>
-
-          
         </div>
 
         {/* Phone mockup */}
         <div className="hero-right" aria-hidden="true">
           <div className="phone-wrap">
             <div className="phone-notif">
-              <div className="notif-icon">🚗</div>
+              <div className="notif-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/>
+                </svg>
+              </div>
               <div>
                 <div className="notif-title">Driver on the way</div>
                 <div className="notif-sub">Gregory · 2 min away</div>
               </div>
             </div>
             <div className="phone-frame">
-            
-                <img 
-                  src="/images/ride.png" 
-                  alt="Yalla app interface" 
-                  className="w-full h-auto rounded-[36px]" 
-                />
+              <img src="/images/ride.png" alt="Yalla app interface" className="w-full h-auto rounded-[36px]"/>
             </div>
             <div className="phone-rating">
               <div className="rating-stars">★★★★★</div>
@@ -162,10 +163,42 @@ export default function HomePage() {
           </div>
           <div className="steps-grid">
             {[
-              { icon: "📍", num: "1", title: "Set your pickup",      desc: "Your current location is detected automatically. Drag the pin to adjust it exactly." },
-              { icon: "🗺️", num: "2", title: "Choose destination",   desc: "Search any address or pick from your saved places. Recent trips appear instantly." },
-              { icon: "🚗", num: "3", title: "Pick a ride",          desc: "See live prices and arrival times for every vehicle type. No surprises." },
-              { icon: "✅", num: "4", title: "Sit back & track",     desc: "Watch your driver move toward you on the map. Call or chat directly from the app." },
+              {
+                icon: (
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                  </svg>
+                ),
+                num: "1", title: "Set your pickup",
+                desc: "Your current location is detected automatically. Drag the pin to adjust it exactly.",
+              },
+              {
+                icon: (
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M20.5 3l-.16.03L15 5.1 9 3 3.36 4.9c-.21.07-.36.25-.36.48V20.5c0 .28.22.5.5.5l.16-.03L9 18.9l6 2.1 5.64-1.9c.21-.07.36-.25.36-.48V3.5c0-.28-.22-.5-.5-.5zM15 19l-6-2.11V5l6 2.11V19z"/>
+                  </svg>
+                ),
+                num: "2", title: "Choose destination",
+                desc: "Search any address or pick from your saved places. Recent trips appear instantly.",
+              },
+              {
+                icon: (
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/>
+                  </svg>
+                ),
+                num: "3", title: "Pick a ride",
+                desc: "See live prices and arrival times for every vehicle type. No surprises.",
+              },
+              {
+                icon: (
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                  </svg>
+                ),
+                num: "4", title: "Sit back & track",
+                desc: "Watch your driver move toward you on the map. Call or chat directly from the app.",
+              },
             ].map((step, i) => (
               <div key={i} className={`step-card reveal ${i > 0 ? `reveal-delay-${i}` : ""}`}>
                 <div className="step-icon-wrap" aria-hidden="true">{step.icon}</div>
@@ -178,30 +211,33 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* FEATURES*/}
+      {/* FEATURES */}
       <section className="features" id="features" aria-labelledby="features-heading">
         <div className="container">
           <div className="features-header">
             <p className="section-label">Features</p>
-            <h2 className="section-title" id="features-heading">Everything you need,<br/>nothing you don't</h2>
+            <h2 className="section-title" id="features-heading">Everything you need,<br/>nothing you don&apos;t</h2>
           </div>
           <div className="features-grid">
-
             <div className="feature-card feature-card--large reveal">
               <div>
-                <div className="feature-icon feature-icon--yellow" aria-hidden="true">🚘</div>
+                <div className="feature-icon feature-icon--yellow" aria-hidden="true">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/>
+                  </svg>
+                </div>
                 <h3 className="feature-title">Six ride types, one tap away</h3>
-                <p className="feature-desc">Standard, Luxury, Limousine, Electric, Bike, Taxi 4seat,Taxi 7 seat — pick the right vehicle for your mood, party size, and budget.</p>
+                <p className="feature-desc">Standard, Luxury, Limousine, Electric, Bike, Taxi 4-seat, Taxi 7-seat — pick the right vehicle for your mood, party size, and budget.</p>
               </div>
               <div className="vehicle-showcase">
                 {[
-                  { emoji:"🚗", name:"Standard", eta:"3 min", price:"$ 25" },
-                  { emoji:"🚙", name:"Luxury",   eta:"3 min", price:"$ 50" },
-                  { emoji:"🏍️", name:"Bike",     eta:"3 min", price:"$ 15" },
-                  { emoji:"⚡", name:"Electric", eta:"2 min", price:"$ 25" },
+                  { icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/></svg>, name: "Standard", eta: "3 min", price: "$ 25" },
+                  { icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4zM6 18.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm13.5-9l1.96 2.5H17V9.5h2.5zm-1.5 9c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>, name: "Luxury", eta: "3 min", price: "$ 50" },
+                  { icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19.44 9.03L15.41 5H11v2h3.59l2 2H4c-1.1 0-2 .9-2 2v3h2c0 1.66 1.34 3 3 3s3-1.34 3-3h4c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-3.17l-2.56-2.8zM7 17c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm10 0c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z"/></svg>, name: "Bike", eta: "3 min", price: "$ 15" },
+                  { icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4v2H4L2 12v4h2c0 1.11.89 2 2 2s2-.89 2-2h8c0 1.11.89 2 2 2s2-.89 2-2h2v-4l-2-6H7zm-.5 9c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm9 0c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zM7.5 6h9l1.5 4.5h-12L7.5 6z"/></svg>, name: "Electric", eta: "2 min", price: "$ 25" },
                 ].map((v) => (
                   <div key={v.name} className="vehicle-row">
-                    <span className="vehicle-row-emoji">{v.emoji}</span>
+                    <span className="vehicle-row-emoji">{v.icon}</span>
                     <span className="vehicle-row-name">{v.name}</span>
                     <span className="vehicle-row-eta">{v.eta}</span>
                     <span className="vehicle-row-price">{v.price}</span>
@@ -211,63 +247,153 @@ export default function HomePage() {
             </div>
 
             <div className="feature-card reveal reveal-delay-1">
-              <div className="feature-icon feature-icon--blue">🗺️</div>
+              <div className="feature-icon feature-icon--blue">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                </svg>
+              </div>
               <h3 className="feature-title">Live GPS tracking</h3>
               <p className="feature-desc">Follow your driver in real time on the map. Know exactly when they&apos;ll arrive — down to the second.</p>
             </div>
 
             <div className="feature-card reveal">
-              <div className="feature-icon feature-icon--green">🛡️</div>
+              <div className="feature-icon feature-icon--green">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
+                </svg>
+              </div>
               <h3 className="feature-title">Built-in safety</h3>
               <p className="feature-desc">Every driver is verified. Share your trip live with family. Call or message your driver directly from the app.</p>
             </div>
 
             <div className="feature-card reveal reveal-delay-1">
-              <div className="feature-icon feature-icon--purple">💳</div>
+              <div className="feature-icon feature-icon--purple">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M20 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/>
+                </svg>
+              </div>
               <h3 className="feature-title">Pay your way</h3>
               <p className="feature-desc">Cash, credit card, or saved card on file. Choose at booking. No surprises at the end of your ride.</p>
             </div>
 
             <div className="feature-card reveal reveal-delay-2">
-              <div className="feature-icon feature-icon--orange">🤝</div>
+              <div className="feature-icon feature-icon--orange">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                </svg>
+              </div>
               <h3 className="feature-title">Choose your driver</h3>
               <p className="feature-desc">Prefer a male or female driver? Set it once and every booking will match your preference automatically.</p>
             </div>
-
           </div>
         </div>
       </section>
-
-
-      {/*REVIEWS*/}
-      <section className="reviews" id="reviews" aria-labelledby="reviews-heading">
-        <div className="container">
-          <div className="reviews-header">
-            <p className="section-label">Reviews</p>
-            <h2 className="section-title" id="reviews-heading">Riders love Yalla</h2>
-            <p className="section-sub">Over 500,000 rides completed. Here&apos;s what people say.</p>
-          </div>
-          <div className="reviews-grid">
-            {[
-              { init:"S", name:"Sara M.",  city:"lebanon ",      quote:"I booked my ride in literally 30 seconds. The driver was there before I even got downstairs. Nothing beats this in Cairo traffic." },
-             ].map((r, i) => (
-              <article key={r.name} className={`review-card reveal ${i > 0 ? `reveal-delay-${i}` : ""}`}>
-                <div className="review-stars" aria-label="5 stars">★★★★★</div>
-                <p className="review-quote">"{r.quote}"</p>
-                <div className="review-author">
-                  <div className="review-avatar" aria-hidden="true">{r.init}</div>
-                  <div>
-                    <div className="review-name">{r.name}</div>
-                    <div className="review-city">{r.city}</div>
-                  </div>
+         {/* REVIEWS  */}
+<section className="reviews" id="reviews" aria-labelledby="reviews-heading">
+  <div className="container">
+    <div className="reviews-header">
+      <p className="section-label">Reviews</p>
+      <h2 className="section-title" id="reviews-heading">Riders love Yalla</h2>
+      <p className="section-sub">Real feedback from real people. Here&apos;s what they say.</p>
+    </div>
+    {loading ? (
+      <div style={{ textAlign: "center", padding: "40px 0", color: "#999999" }}>
+        Loading reviews...
+      </div>
+    ) : reviews.length === 0 ? (
+      <div style={{ textAlign: "center", padding: "40px 0", color: "#999999" }}>
+        No reviews yet. Be the first to share your experience!
+      </div>
+    ) : (
+      <div className="reviews-grid">
+        {reviews.map((review, i) => (
+          <div 
+            key={review.id} 
+            style={{
+              background: "#1a1a1a",
+              border: "1px solid rgba(255,255,255,0.06)",
+              borderRadius: "16px",
+              padding: "32px 28px",
+              transition: "border-color 0.3s, transform 0.3s",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = "rgba(255,230,0,0.2)";
+              e.currentTarget.style.transform = "translateY(-4px)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = "rgba(255,255,255,0.06)";
+              e.currentTarget.style.transform = "translateY(0)";
+            }}
+          >
+            <div style={{ 
+              color: "#FFE600", 
+              fontSize: "18px",
+              letterSpacing: "2px",
+              marginBottom: "18px"
+            }}>
+              {"★".repeat(review.rating)}{"☆".repeat(5 - review.rating)}
+            </div>
+            <p style={{ 
+              fontSize: "15px", 
+              lineHeight: "1.7", 
+              color: "#e0e0e0",
+              marginBottom: "24px"
+            }}>
+              &ldquo;{review.review}&rdquo;
+            </p>
+            <div style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "12px",
+              paddingTop: "16px",
+              borderTop: "1px solid rgba(255,255,255,0.06)"
+            }}>
+              <div style={{
+                width: "40px",
+                height: "40px",
+                borderRadius: "50%",
+                background: "#FFE600",
+                color: "#000000",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontWeight: 700,
+                fontSize: "15px",
+                flexShrink: 0
+              }}>
+                {getInitials(review.name)}
+              </div>
+              <div>
+                <div style={{ fontWeight: 600, fontSize: "14px", color: "#ffffff" }}>
+                  {review.name}
                 </div>
-              </article>
-            ))}
+                <div style={{ fontSize: "12px", color: "#999999", marginTop: "2px" }}>
+                  Verified rider
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-      </section>
-
-      {/* DOWNLOAD CTA*/}
+        ))}
+      </div>
+    )}
+    <div style={{ textAlign: "center", marginTop: "32px" }}>
+      <Link href="/reviews" style={{ 
+        padding: "10px 28px",
+        borderRadius: "999px",
+        border: "1px solid rgba(255,255,255,0.1)",
+        color: "#e0e0e0",
+        textDecoration: "none",
+        fontSize: "14px",
+        fontWeight: 600,
+        transition: "all 0.2s ease",
+        display: "inline-block",
+      }}>
+        See all reviews →
+      </Link>
+    </div>
+  </div>
+</section>
+      {/* DOWNLOAD CTA */}
       <section className="download" id="download" aria-labelledby="download-heading">
         <div className="container">
           <div className="download-inner">
@@ -277,11 +403,11 @@ export default function HomePage() {
                 Ready to<br/><span>ride smarter?</span>
               </h2>
               <p className="download-sub">
-                Join half a million riders in lebanon.
-                Download Yalla free — your first ride is on us.
+                  Join  riders in Lebanon.
+                Download Yalla free .
               </p>
               <div className="download-badges">
-                <a href="#" className="store-badge">
+                <a href="/download" className="store-badge">
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="white" aria-hidden="true">
                     <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
                   </svg>
@@ -290,7 +416,7 @@ export default function HomePage() {
                     <div className="store-badge-name">App Store</div>
                   </div>
                 </a>
-                <a href="#" className="store-badge">
+                <a href="/download" className="store-badge">
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                     <path d="M3.18 23.76c.3.17.65.2.98.07l11.65-6.73-2.6-2.6-10.03 9.26z" fill="#EA4335"/>
                     <path d="M22.23 10.07l-2.98-1.72-2.93 2.65 2.93 2.93 2.98-1.72c.85-.49.85-1.65 0-2.14z" fill="#FBBC05"/>
@@ -307,87 +433,24 @@ export default function HomePage() {
             <div className="qr-wrap" aria-label="Scan QR code to download">
               <svg width="120" height="120" viewBox="0 0 120 120">
                 <rect width="120" height="120" fill="white"/>
-                <rect x="8"  y="8"  width="30" height="30" rx="4" fill="#0d0d0d"/>
+                <rect x="8" y="8" width="30" height="30" rx="4" fill="#0d0d0d"/>
                 <rect x="12" y="12" width="22" height="22" rx="2" fill="white"/>
                 <rect x="15" y="15" width="16" height="16" rx="1" fill="#0d0d0d"/>
-                <rect x="82" y="8"  width="30" height="30" rx="4" fill="#0d0d0d"/>
+                <rect x="82" y="8" width="30" height="30" rx="4" fill="#0d0d0d"/>
                 <rect x="86" y="12" width="22" height="22" rx="2" fill="white"/>
                 <rect x="89" y="15" width="16" height="16" rx="1" fill="#0d0d0d"/>
-                <rect x="8"  y="82" width="30" height="30" rx="4" fill="#0d0d0d"/>
+                <rect x="8" y="82" width="30" height="30" rx="4" fill="#0d0d0d"/>
                 <rect x="12" y="86" width="22" height="22" rx="2" fill="white"/>
                 <rect x="15" y="89" width="16" height="16" rx="1" fill="#0d0d0d"/>
                 <rect x="54" y="54" width="12" height="12" rx="2" fill="#FFE600"/>
               </svg>
               <div className="qr-label" style={{ color: "#0d0d0d" }}>Scan to download</div>
-              
             </div>
           </div>
         </div>
       </section>
 
-      {/* FOOTER*/}
-      <footer className="footer" aria-label="Site footer">
-        <div className="container">
-          <div className="footer-top">
-            <div>
-              <a href="#" className="nav-logo">
-              
-                <span className="nav-logo-text">Yalla</span>
-              </a>
-              <p className="footer-brand-desc">Fast, safe rides across lebanon . Book in seconds, track in real time, arrive on time.</p>
-            </div>
-            <div>
-              <p className="footer-col-title">Product</p>
-              <ul className="footer-links">
-                <li><a href="#how">How it works</a></li>
-                <li><a href="#features">Features</a></li>
-                <li><a href="#rides">Ride types</a></li>
-                <li><a href="#download">Download</a></li>
-              </ul>
-            </div>
-            <div>
-              <p className="footer-col-title">Company</p>
-              <ul className="footer-links">
-                <li><a href="#">About us</a></li>
-                <li><a href="#">Drive with Yalla</a></li>
-                <li><a href="#">Careers</a></li>
-                <li><a href="#">Press</a></li>
-              </ul>
-            </div>
-            <div>
-              <p className="footer-col-title">Support</p>
-              <ul className="footer-links">
-                <li><a href="#">Help center</a></li>
-                <li><a href="#">Safety</a></li>
-                <li><a href="#">Privacy policy</a></li>
-                <li><a href="#">Terms of service</a></li>
-              </ul>
-            </div>
-          </div>
-          <div className="footer-bottom">
-            <span>© 2025 Yalla. All rights reserved.</span>
-            <div className="footer-socials">
-              <a href="#" className="social-btn" aria-label="Yalla on X">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-                </svg>
-              </a>
-              <a href="#" className="social-btn" aria-label="Yalla on Instagram">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <rect x="2" y="2" width="20" height="20" rx="5"/>
-                  <circle cx="12" cy="12" r="5"/>
-                  <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
-                </svg>
-              </a>
-              <a href="#" className="social-btn" aria-label="Yalla on Facebook">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/>
-                </svg>
-              </a>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </>
   );
 }

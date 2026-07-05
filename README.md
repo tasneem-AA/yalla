@@ -35,5 +35,8 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 
+npm install recharts  
 i use recharts
 library ffor analytics
+
+npm install next-auth @prisma/client prisma

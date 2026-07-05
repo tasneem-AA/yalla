@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
+import "@fortawesome/fontawesome-free/css/all.min.css";
 import "./globals.css";
+import Providers from "@/components/Providers";   
+
 export const metadata: Metadata = {
   title: "Yalla — Your ride, instantly",
   description: "Book a car in seconds. Track it live. Pay your way.",
@@ -21,7 +24,7 @@ export default function RootLayout({
         />
       </head>
       <body>
-        {children}
+        <Providers>{children}</Providers>   
       </body>
     </html>
   );
