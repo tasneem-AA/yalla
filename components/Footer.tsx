@@ -14,12 +14,7 @@ export default function Footer() {
             <p className="footer-brand-desc">
               Fast, safe rides across Lebanon. Book in seconds, track in real time, arrive on time.
             </p>
-            {/* 🔐 ADMIN LOGIN BUTTON */}
-            <div style={{ marginTop: "20px" }}>
-              <Link href="/login" className="btn-nav" style={{ display: "inline-block" }}>
-                🔐 Admin Login
-              </Link>
-            </div>
+            
           </div>
           <div>
             <p className="footer-col-title">Product</p>
