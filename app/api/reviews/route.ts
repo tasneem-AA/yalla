@@ -6,7 +6,7 @@ export async function GET(req: NextRequest) {
   try {
     const type = req.nextUrl.searchParams.get("type");
 
-    const reviews = await prisma.review.findMany({
+    const reviews = await (prisma as any).review.findMany({
       where: type ? { type: type } : undefined,
       orderBy: { createdAt: "desc" },
     });
@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
-    const created = await prisma.review.create({
+    const created = await (prisma as any).review.create({
        data: {
         name,
         city: city || "Lebanon",

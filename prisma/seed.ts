@@ -163,12 +163,9 @@ async function main() {
       },
     ],
   });
-  console.log(`✅ Feedback created: 16`);
-
-  // Create downloads with unique userId + platform combination
+ 
   await prisma.download.deleteMany();
   
-  // Get the actual user IDs for real users
   const users = await prisma.user.findMany({
     where: {
       email: {
