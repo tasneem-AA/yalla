@@ -16,6 +16,7 @@ type Review = {
 export default function HomePage() {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -63,6 +64,10 @@ export default function HomePage() {
     return name.charAt(0).toUpperCase();
   }
 
+  // ─── Video Modal Functions ───
+  const openVideoModal = () => setIsVideoModalOpen(true);
+  const closeVideoModal = () => setIsVideoModalOpen(false);
+
   return (
     <>
       <Navbar />
@@ -93,13 +98,14 @@ export default function HomePage() {
               </svg>
               Get the app
             </Link>
-            <a href="#how" className="btn-ghost">
+            {/* ─── UPDATED: Open video modal ─── */}
+            <button onClick={openVideoModal} className="btn-ghost">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
                 <polygon points="10 8 16 12 10 16 10 8" fill="currentColor"/>
               </svg>
               See how it works
-            </a>
+            </button>
           </div>
 
           <div className="store-badges" aria-label="Download links">
@@ -256,7 +262,7 @@ export default function HomePage() {
               <p className="feature-desc">Follow your driver in real time on the map. Know exactly when they&apos;ll arrive — down to the second.</p>
             </div>
 
-            <div className="feature-card reveal">
+            <div className="feature-card reveal text-center">
               <div className="feature-icon feature-icon--green">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
@@ -266,7 +272,7 @@ export default function HomePage() {
               <p className="feature-desc">Every driver is verified. Share your trip live with family. Call or message your driver directly from the app.</p>
             </div>
 
-            <div className="feature-card reveal reveal-delay-1">
+            <div className="feature-card reveal reveal-delay-1 text-center">
               <div className="feature-icon feature-icon--purple">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M20 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/>
@@ -276,7 +282,7 @@ export default function HomePage() {
               <p className="feature-desc">Cash, credit card, or saved card on file. Choose at booking. No surprises at the end of your ride.</p>
             </div>
 
-            <div className="feature-card reveal reveal-delay-2">
+            <div className="feature-card reveal reveal-delay-2 text-center">
               <div className="feature-icon feature-icon--orange">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
@@ -451,6 +457,203 @@ export default function HomePage() {
       </section>
 
       <Footer />
+      
+      {/* ─── VIDEO MODAL ─── */}
+      {isVideoModalOpen && (
+        <div 
+          className="video-modal-overlay" 
+          onClick={closeVideoModal}
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: "rgba(0,0,0,0.85)",
+            backdropFilter: "blur(12px)",
+            zIndex: 9999,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "20px",
+            animation: "fadeIn 0.3s ease",
+          }}
+        >
+          <div 
+            className="video-modal-content"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              background: "var(--black-2)",
+              borderRadius: "24px",
+              maxWidth: "900px",
+              width: "100%",
+              border: "1px solid rgba(255,255,255,0.08)",
+              overflow: "hidden",
+              position: "relative",
+              animation: "slideUp 0.3s ease",
+            }}
+          >
+            {/* Close button */}
+            <button
+              onClick={closeVideoModal}
+              style={{
+                position: "absolute",
+                top: "16px",
+                right: "20px",
+                background: "rgba(255,255,255,0.06)",
+                border: "none",
+                color: "var(--white)",
+                fontSize: "24px",
+                width: "44px",
+                height: "44px",
+                borderRadius: "50%",
+                cursor: "pointer",
+                zIndex: 10,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                transition: "all 0.2s",
+                fontWeight: 300,
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = "rgba(255,255,255,0.12)";
+                e.currentTarget.style.transform = "rotate(90deg)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = "rgba(255,255,255,0.06)";
+                e.currentTarget.style.transform = "rotate(0)";
+              }}
+            >
+              ×
+            </button>
+
+            {/* Video title */}
+            <div style={{ padding: "24px 28px 16px" }}>
+              <h3 style={{
+                fontFamily: "var(--font-display)",
+                fontSize: "22px",
+                fontWeight: 700,
+                color: "var(--white)",
+                margin: 0,
+              }}>
+                How Yalla works – in 60 seconds
+              </h3>
+              <p style={{
+                fontSize: "14px",
+                color: "var(--gray-3)",
+                margin: "8px 0 0 0",
+              }}>
+                Watch a quick demo of booking a ride from start to finish.
+              </p>
+            </div>
+
+            {/* Video container */}
+            <div style={{
+              padding: "0 28px 28px",
+            }}>
+              <div style={{
+                position: "relative",
+                paddingBottom: "56.25%", // 16:9 aspect ratio
+                height: 0,
+                background: "var(--black-3)",
+                borderRadius: "16px",
+                overflow: "hidden",
+                border: "1px solid rgba(255,255,255,0.06)",
+              }}> <div style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  width: "100%",
+                  height: "100%",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  background: "var(--black-4)",
+                  gap: "16px",
+                }}>
+                  <div style={{
+                    fontSize: "72px",
+                    opacity: 0.6,
+                  }}></div>
+                  
+                  <div style={{
+                    display: "flex",
+                    gap: "12px",
+                    marginTop: "8px",
+                  }}>
+                    
+                  </div>
+                </div>
+              </div>
+            </div>
+           {/* Footer note */}
+            <div style={{
+              padding: "0 28px 24px",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              borderTop: "1px solid rgba(255,255,255,0.04)",
+              paddingTop: "16px",
+            }}>
+              <span style={{
+                fontSize: "12px",
+                color: "var(--gray-4)",
+              }}>
+                Available on iOS & Android
+              </span>
+              <button
+                onClick={closeVideoModal}
+                style={{
+                  background: "var(--yellow)",
+                  color: "var(--black)",
+                  border: "none",
+                  padding: "8px 24px",
+                  borderRadius: "999px",
+                  fontSize: "13px",
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  transition: "all 0.2s",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "scale(1.02)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "scale(1)";
+                }}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ─── CSS Animation Styles ─── */}
+      <style jsx global>{`
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+          from {
+            opacity: 0;
+            transform: translateY(40px) scale(0.95);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+          }
+        }
+
+        /* Prevent body scroll when modal is open */
+        body.modal-open {
+          overflow: hidden;
+        }
+      `}</style>
+
+      
     </>
   );
 }
