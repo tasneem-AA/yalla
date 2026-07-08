@@ -1,57 +1,44 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
-export async function GET() {
-  try {
-    const feedback = await prisma.feedback.findMany({
-      orderBy: { createdAt: "desc" },
-    });
-    return NextResponse.json({ feedback });
-  } catch (err) {
-    console.error("GET /api/feedback error:", err);
-    return NextResponse.json({ error: "Failed to fetch feedback" }, { status: 500 });
-  }
-}
-
 export async function POST(req: NextRequest) {
-  try {
-    const body = await req.json();
-    const { rating, category, message, userName, userEmail } = body;
+  const { rating, category, message } = await req.json();
 
-    if (!rating || rating < 1 || rating > 5) {
-      return NextResponse.json({ error: "Rating must be 1–5" }, { status: 400 });
-    }
-    if (!message || message.trim().length < 10) {
-      return NextResponse.json({ error: "Message too short" }, { status: 400 });
-    }
+  // Create feedback without user (anonymous)
+  await prisma.feedback.create({
+    data: {
+      rating,
+      category,
+      message,
+      // No userId – leave it null
+    },
+  });
 
-    const created = await prisma.feedback.create({
-      data: {
-        rating: Number(rating),
-        category: category || "Other",
-        message: message.trim(),
-        userName: userName ?? null,
-        userEmail: userEmail ?? null,
-      },
-    });
-
-    return NextResponse.json({ success: true, feedback: created }, { status: 201 });
-  } catch (err) {
-    console.error("POST /api/feedback error:", err);
-    return NextResponse.json({ error: "Server error" }, { status: 500 });
-  }
+  return NextResponse.json({ success: true });
 }
 
-export async function DELETE(req: NextRequest) {
-  try {
-    const id = Number(req.nextUrl.searchParams.get("id"));
-    if (!id) return NextResponse.json({ error: "ID required" }, { status: 400 });
+export async function GET(req: NextRequest) {
+  // No authentication needed – anyone can view feedback
+  const feedbacks = await prisma.feedback.findMany({
+    orderBy: { createdAt: "desc" },
+    select: {
+      id: true,
+      rating: true,
+      category: true,
+      message: true,
+      createdAt: true,
+    },
+  });
 
-    await prisma.feedback.delete({ where: { id } });
+  // Format for frontend
+  const formatted = feedbacks.map((f) => ({
+    id: f.id,
+    rating: f.rating,
+    category: f.category || "General",
+    message: f.message,
+    userName: "Anonymous", // Always anonymous
+    createdAt: f.createdAt.toISOString(),
+  }));
 
-    return NextResponse.json({ success: true });
-  } catch (err) {
-    console.error("DELETE /api/feedback error:", err);
-    return NextResponse.json({ error: "Server error" }, { status: 500 });
-  }
+  return NextResponse.json({ feedback: formatted });
 }

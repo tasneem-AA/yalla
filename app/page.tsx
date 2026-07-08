@@ -42,7 +42,6 @@ export default function HomePage() {
        const topReviews = feedbackItems
           .map((item: any) => ({
             id: item.id,
-            name: item.userName || "Anonymous",
             rating: item.rating,
             review: item.message,
             createdAt: item.createdAt,
@@ -347,38 +346,8 @@ export default function HomePage() {
             }}>
               &ldquo;{review.review}&rdquo;
             </p>
-            <div style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "12px",
-              paddingTop: "16px",
-              borderTop: "1px solid rgba(255,255,255,0.06)"
-            }}>
-              <div style={{
-                width: "40px",
-                height: "40px",
-                borderRadius: "50%",
-                background: "#FFE600",
-                color: "#000000",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontWeight: 700,
-                fontSize: "15px",
-                flexShrink: 0
-              }}>
-                {getInitials(review.name)}
-              </div>
-              <div>
-                <div style={{ fontWeight: 600, fontSize: "14px", color: "#ffffff" }}>
-                  {review.name}
-                </div>
-                <div style={{ fontSize: "12px", color: "#999999", marginTop: "2px" }}>
-                  Verified rider
-                </div>
-              </div>
+           
             </div>
-          </div>
         ))}
       </div>
     )}

@@ -7,8 +7,6 @@ type FeedbackItem = {
   rating: number;
   category: string;
   message: string;
-  userName?: string;
-  userEmail?: string;
   createdAt: string;
 };
 
@@ -60,7 +58,6 @@ export default function AdminFeedbackPage() {
   const filtered = items.filter((item) =>
     !search ||
     item.message.toLowerCase().includes(search.toLowerCase()) ||
-    item.userName?.toLowerCase().includes(search.toLowerCase()) ||
     item.category.toLowerCase().includes(search.toLowerCase())
   );
 
@@ -126,7 +123,6 @@ export default function AdminFeedbackPage() {
                       <span style={{ color: "var(--yellow)" }}>{"★".repeat(item.rating)}</span>
                     </td>
                     <td><span className="badge badge-gray">{item.category}</span></td>
-                    <td>{item.userName ?? "Anonymous"}</td>
                     <td style={{ color: "var(--gray-3)" }}>
                       {new Date(item.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
                     </td>
@@ -167,8 +163,7 @@ export default function AdminFeedbackPage() {
             </p>
 
             <div style={{ fontSize: 13, color: "var(--gray-3)", borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: 16 }}>
-              <div><strong style={{ color: "var(--white)" }}>{selected.userName ?? "Anonymous"}</strong></div>
-              {selected.userEmail && <div>{selected.userEmail}</div>}
+              
               <div style={{ marginTop: 4 }}>{new Date(selected.createdAt).toLocaleString("en-US")}</div>
             </div>
           </div>
@@ -182,7 +177,7 @@ export default function AdminFeedbackPage() {
             <div className="modal-icon"><i className="fas fa-trash-alt"></i></div>
             <h3 className="modal-title">Delete Feedback</h3>
             <p className="modal-message">
-              Are you sure you want to delete this feedback from <strong>{itemToDelete.userName || "Anonymous"}</strong>?
+              Are you sure you want to delete this feedback from ?
               <br />
               <span style={{ fontSize: 12, color: "var(--gray-4)" }}>This action cannot be undone.</span>
             </p>

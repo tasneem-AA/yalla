@@ -69,8 +69,6 @@ model Feedback {
   rating    Int
   category  String
   message   String   @db.Text
-  userName  String?
-  userEmail String?
   createdAt DateTime @default(now())
 }
 

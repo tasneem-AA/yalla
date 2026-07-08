@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 type Download = {
   id: number;
   platform: "ios" | "android";
-  userId?: string;
   createdAt: string;
 };
 
@@ -27,7 +26,7 @@ export default function AdminDownloadsPage() {
   
   const filtered = downloads.filter((d) => {
     const matchPlatform = filter === "all" || d.platform === filter;
-    const matchSearch = !search || d.userId?.toLowerCase().includes(search.toLowerCase());
+    const matchSearch = !search || d.platform.toLowerCase().includes(search.toLowerCase());
     return matchPlatform && matchSearch;
   });
 
@@ -57,12 +56,7 @@ export default function AdminDownloadsPage() {
 
      
       <div className="admin-search">
-        <input
-          className="admin-search-input"
-          placeholder="Search by user ID…"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
+       
         
         {(["all", "ios", "android"] as const).map((f) => (
           <button
@@ -97,7 +91,6 @@ export default function AdminDownloadsPage() {
               <tr>
                 <th>#</th>
                 <th>Platform</th>
-                <th>User ID</th>
                 <th>Date & Time</th>
               </tr>
             </thead>
@@ -118,9 +111,7 @@ export default function AdminDownloadsPage() {
                     )}{d.platform === "ios" ? " iOS" : " Android"}
                     </span>
                   </td>
-                  <td style={{ fontFamily: "monospace", fontSize: 12, color: "var(--gray-3)" }}>
-                    {d.userId ?? "—"}
-                  </td>
+                
                   <td style={{ color: "var(--gray-3)" }}>
                     {new Date(d.createdAt).toLocaleString("en-US", {
                       month: "short", day: "numeric",

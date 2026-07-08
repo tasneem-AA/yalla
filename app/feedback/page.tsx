@@ -2,7 +2,6 @@
 
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import AuthGuard from "@/components/AuthGuard";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 
@@ -45,8 +44,7 @@ export default function FeedbackPage() {
           rating,
           category,
           message,
-          userName: session?.user?.name,
-          userEmail: session?.user?.email,
+         
         }),
       });
 
@@ -64,7 +62,7 @@ export default function FeedbackPage() {
   }
 
   return (
-    <AuthGuard>
+    <>
       <Navbar />
 
       <main className="feedback-page">
@@ -200,6 +198,6 @@ export default function FeedbackPage() {
       </main>
 
       <Footer />
-    </AuthGuard>
+    </>
   );
 }

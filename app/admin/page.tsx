@@ -70,7 +70,7 @@ export default async function AdminDashboard() {
       <div className="admin-table-card" style={{ marginBottom: 28 }}>
         <table className="admin-table">
           <thead>
-            <tr><th>Platform</th><th>User ID</th><th>Date</th></tr>
+            <tr><th>Platform</th><th>Date</th></tr>
           </thead>
           <tbody>
             {stats.recentDownloads.map((d) => (
@@ -89,7 +89,6 @@ export default async function AdminDashboard() {
                     {d.platform === "ios" ? "iOS" : "Android"}
                   </span>
                 </td>
-                <td style={{ fontFamily: "monospace", fontSize: 12, color: "var(--gray-3)" }}>{d.userId ?? "Anonymous"}</td>
                 <td style={{ color: "var(--gray-3)" }}>
                   {new Date(d.createdAt).toLocaleString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
                 </td>
@@ -103,14 +102,13 @@ export default async function AdminDashboard() {
       <div className="admin-table-card">
         <table className="admin-table">
           <thead>
-            <tr><th>Rating</th><th>Category</th><th>From</th><th>Date</th></tr>
+            <tr><th>Rating</th><th>Category</th><th>Date</th></tr>
           </thead>
           <tbody>
             {stats.recentFeedback.map((f) => (
               <tr key={f.id}>
                 <td><span style={{ color: "var(--yellow)" }}>{"★".repeat(f.rating)}</span></td>
                 <td><span className="badge badge-gray">{f.category}</span></td>
-                <td>{f.userName ?? "Anonymous"}</td>
                 <td style={{ color: "var(--gray-3)" }}>
                   {new Date(f.createdAt).toLocaleString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
                 </td>

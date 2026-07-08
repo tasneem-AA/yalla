@@ -104,7 +104,7 @@ export default function DownloadPage() {
   ];
 
   return (
-    <AuthGuard>
+    <>
       <Navbar />
 
       <main className="download-page">
@@ -216,6 +216,6 @@ export default function DownloadPage() {
       </main>
 
       <Footer />
-    </AuthGuard>
+      </>
   );
 }

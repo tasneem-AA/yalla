@@ -54,6 +54,7 @@ export default function Navbar() {
 
           <ul className="nav-links">
             <li><Link href="/features">Features</Link></li>
+            <li><Link href="/download">Download</Link></li>
             <li><Link href="/reviews">Reviews</Link></li>
             <li><Link href="/analytics">Analytics</Link></li>
             <li><Link href="/feedback">Feedback</Link></li>
@@ -67,15 +68,7 @@ export default function Navbar() {
             )}
           </ul>
 
-          <div className="nav-cta">
-            {session ? (
-              <button className="btn-nav" onClick={handleLogoutClick}>
-                Logout
-              </button>
-            ) : (
-              <Link href="/login" className="btn-nav">Login</Link>
-            )}
-          </div>
+          
         </div>
 
         {/* Sidebar */}

@@ -13,15 +13,14 @@ export default withAuth(
   },
   {
     callbacks: {
-      authorized: ({ token }) => !!token,
+      authorized: ({ token }) => {
+        // Only check for admin routes – users don't need to be logged in for other pages
+        return true;
+      },
     },
   }
 );
 
 export const config = {
-  matcher: [
-    "/download/:path*",
-    "/feedback/:path*",
-    "/admin/:path*",
-  ],
+  matcher: ["/admin/:path*"],
 };

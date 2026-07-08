@@ -20,8 +20,6 @@ type FeedbackItem = {
   rating: number;
   category: string;
   message: string;
-  userName?: string;
-  userEmail?: string;
   createdAt: string;
 };
 
@@ -48,9 +46,9 @@ export default function ReviewsPage() {
   const [barsVisible, setBarsVisible] = useState(false);
 
   function transformFeedbackToReviews(feedbackItems: FeedbackItem[]): Review[] {
-    return feedbackItems.map((f) => ({
+   return feedbackItems.map((f) => ({
       id: f.id,
-      name: f.userName || "Anonymous",
+      name: "",
       city: "Lebanon", 
       rating: f.rating,
       type: "rider" as const, 
@@ -70,12 +68,7 @@ export default function ReviewsPage() {
         setTimeout(() => setBarsVisible(true), 300);
       })
       .catch(() => {
-        
-        setAllReviews([
-          { id: 1, name: "Sara M.", city: "Beirut", rating: 5, type: "rider", review: "The booking flow is incredibly smooth. Under 30 seconds from open to confirmed driver.", createdAt: new Date().toISOString() },
-          { id: 2, name: "Karim J.", city: "Jounieh", rating: 4, type: "rider", review: "Driver was polite and professional. Car was clean.", createdAt: new Date(Date.now() - 86400000).toISOString() },
-        ]);
-        setTimeout(() => setBarsVisible(true), 300);
+        setAllReviews([]);
       });
 
     const observer = new IntersectionObserver(
@@ -217,18 +210,11 @@ export default function ReviewsPage() {
                   </div>
                   <p className="review-quote">&ldquo;{r.review}&rdquo;</p>
                   <div className="review-author">
-                    <div className="review-avatar">{initials(r.name)}</div>
-                    <div>
-                      <div className="review-name">{r.name}</div>
+                   <div>
                       <div className="review-city">{r.city} · {timeAgo(r.createdAt)}</div>
                     </div>
                   </div>
-                  <div className="review-verified">
-                    <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    {r.type === "rider" ? "Verified rider" : "Verified driver"}
-                  </div>
+                  
                 </article>
               ))}
             </div>
