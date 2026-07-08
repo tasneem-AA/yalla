@@ -1256,3 +1256,18 @@ a { text-decoration: none; color: inherit; }
 .burger.open span:nth-child(3) {
   transform: rotate(-45deg) translate(5px, -5px);
 }
+/* Center step cards */
+.step-card.text-center .step-icon-wrap {
+  margin-left: auto;
+  margin-right: auto;
+}
+.step-card.text-center .step-num {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Center feature icons */
+.feature-card.text-center .feature-icon {
+  margin-left: auto;
+  margin-right: auto;
+}

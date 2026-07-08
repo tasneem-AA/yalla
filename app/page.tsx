@@ -200,9 +200,9 @@ export default function HomePage() {
                 desc: "Watch your driver move toward you on the map. Call or chat directly from the app.",
               },
             ].map((step, i) => (
-              <div key={i} className={`step-card reveal ${i > 0 ? `reveal-delay-${i}` : ""}`}>
-                <div className="step-icon-wrap" aria-hidden="true">{step.icon}</div>
-                <div className="step-num" aria-hidden="true">{step.num}</div>
+              <div key={i} className={`step-card reveal ${i > 0 ? `reveal-delay-${i}` : ""}text-center`}>
+                <div className="step-icon-wrap mx-auto" aria-hidden="true">{step.icon}</div>
+                <div className="step-num mx-auto" aria-hidden="true">{step.num}</div>
                 <h3 className="step-title">{step.title}</h3>
                 <p className="step-desc">{step.desc}</p>
               </div>
@@ -219,7 +219,7 @@ export default function HomePage() {
             <h2 className="section-title" id="features-heading">Everything you need,<br/>nothing you don&apos;t</h2>
           </div>
           <div className="features-grid">
-            <div className="feature-card feature-card--large reveal">
+            <div className="feature-card feature-card--large reveal text-center">
               <div>
                 <div className="feature-icon feature-icon--yellow" aria-hidden="true">
                   <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
@@ -246,8 +246,8 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="feature-card reveal reveal-delay-1">
-              <div className="feature-icon feature-icon--blue">
+            <div className="feature-card reveal reveal-delay-1 text-center">
+              <div className="feature-icon feature-icon--blue mx-auto">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
                 </svg>
